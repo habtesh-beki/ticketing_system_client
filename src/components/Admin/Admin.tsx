@@ -4,12 +4,11 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "../ui/separator";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
-import { title } from "process";
+
 const datas = [
   {
     title: "Unable to access my account",
@@ -86,7 +85,10 @@ export default function Body() {
                 <Separator />
                 <div className="flex justify-between">
                   <p className="font-bold">Created By: Regular User</p>
-                  <form className="flex justify-between items-center gap-2">
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex justify-between items-center gap-2"
+                  >
                     <span className="font-bold">Update Status</span>
                     <Select
                       onValueChange={(value) => setValue("status", value)}
