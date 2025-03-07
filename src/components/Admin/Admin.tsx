@@ -7,6 +7,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "../ui/separator";
+import { SubmitHandler, useForm } from "react-hook-form";
+import axios from "axios";
+import { title } from "process";
 const datas = [
   {
     title: "Unable to access my account",
@@ -30,8 +33,24 @@ const datas = [
     date: "22/02/2025",
   },
 ];
-
+type Inputs = {
+  status: string;
+};
 export default function Body() {
+  const { register, handleSubmit, setValue } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const Id = localStorage.getItem("user");
+    try {
+      const loginUser = await axios.put(
+        `http://127.0.0.1:3000/api/v1/${Id}`,
+        data
+      );
+      const token = loginUser.data.token;
+      localStorage.setItem("auth-token", token);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div className="bg-[#F3F4F6] flex-grow py-20 px-50 min-h-11/12">
       <div>
@@ -67,18 +86,21 @@ export default function Body() {
                 <Separator />
                 <div className="flex justify-between">
                   <p className="font-bold">Created By: Regular User</p>
-                  <div className="flex justify-between items-center gap-2">
+                  <form className="flex justify-between items-center gap-2">
                     <span className="font-bold">Update Status</span>
-                    <Select>
-                      <SelectTrigger className="w-[180px] border-[#4338CA]">
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
+                    <Select
+                      onValueChange={(value) => setValue("status", value)}
+                    >
+                      <SelectTrigger
+                        {...register("status", { required: true })}
+                        className="focus:ring-blue-600 w-full"
+                      ></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="light">In Progress</SelectItem>
                         <SelectItem value="dark">Closed</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                  </form>
                 </div>
               </div>
             ))}
