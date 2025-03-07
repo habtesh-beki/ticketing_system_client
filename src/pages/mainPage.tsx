@@ -1,5 +1,5 @@
-import Body from "@/components/Admin/Admin";
 import Header from "@/components/Header/HeaderAfterLogedIn";
+import Body from "@/components/RegularUser/Body";
 
 export default function MainPage() {
   return (
