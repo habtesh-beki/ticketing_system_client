@@ -3,6 +3,8 @@ import { Textarea } from "../ui/textarea";
 import { CirclePlus, Clock10, FileWarning, Ticket } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { SubmitHandler, useForm } from "react-hook-form";
+import axios from "axios";
 
 const datas = [
   {
@@ -28,7 +30,26 @@ const datas = [
   },
 ];
 
+type Inputs = {
+  title: string;
+  discription: string;
+};
+
 export default function Body() {
+  const { register, handleSubmit } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const Id = localStorage.getItem("user");
+    try {
+      const loginUser = await axios.put(
+        `http://127.0.0.1:3000/api/v1/${Id}$`,
+        data
+      );
+      const token = loginUser.data.token;
+      localStorage.setItem("auth-token", token);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div className="bg-[#F3F4F6] flex-grow py-20 px-50">
       <div>
@@ -68,19 +89,31 @@ export default function Body() {
             <CirclePlus size={36} className="text-[#5046E6]" />{" "}
             <h1 className="text-3xl font-bold">create new ticket</h1>
           </h1>
-          <div className="flex flex-col gap-3 w-full mt-5 border p-8 rounded-md mt-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-3 w-full mt-5 border p-8 rounded-md mt-4"
+          >
             <div>
               <label className="font-bold mb-2">Title</label>
-              <Input className="h-12" />
+              <Input
+                className="h-12"
+                {...(register("title"), { required: true })}
+              />
             </div>
             <div>
               <label className="font-bold mb-2">Description</label>
-              <Textarea placeholder="Write your description here" />
+              <Textarea
+                placeholder="Write your description here"
+                {...(register("discription"), { required: true })}
+              />
             </div>
-            <Button className="bg-[#4338CA] text-white text-xl mt-3">
+            <Button
+              type="submit"
+              className="bg-[#4338CA] text-white text-xl mt-3"
+            >
               Create Ticket
             </Button>
-          </div>
+          </form>
         </div>
       </div>
     </div>
