@@ -1,10 +1,10 @@
 import { User } from "lucide-react";
 import { Input } from "../ui/input";
-import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
 import { Link } from "react-router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
+import { useState } from "react";
 
 type Inputs = {
   email: string;
@@ -12,7 +12,7 @@ type Inputs = {
 };
 
 export default function LoginForm() {
-  const navigate = useNavigate();
+  const [enterData, setEnterData] = useState("");
   const { register, handleSubmit } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -23,7 +23,7 @@ export default function LoginForm() {
       );
       const token = loginUser.data.token;
       localStorage.setItem("auth-token", token);
-      navigate("/mainpage");
+      setEnterData("data enter successfully");
     } catch (error) {
       console.error(error);
     }
@@ -46,13 +46,27 @@ export default function LoginForm() {
           className="flex flex-col gap-3 w-1/2 mt-5 border p-8 rounded-md"
         >
           <div>
-            <label className="font-bold mb-2">Email</label>
-            <Input className="h-12" {...register("email")} />
+            <label className="font-bold mb-2" id="email">
+              Email
+            </label>
+            <Input
+              aria-labelledby="email"
+              className="h-12"
+              {...register("email")}
+            />
           </div>
           <div>
-            <label className="font-bold mb-2">Password</label>
-            <Input className="h-12" {...register("password")} />
+            <label className="font-bold mb-2" id="password">
+              Password
+            </label>
+            <Input
+              aria-labelledby="password"
+              type="password"
+              className="h-12"
+              {...register("password")}
+            />
           </div>
+          {enterData && <p>{enterData}</p>}
           <Button className="bg-[#4338CA] text-white text-xl mt-3">
             Login
           </Button>
