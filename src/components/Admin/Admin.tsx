@@ -98,8 +98,8 @@ export default function Body() {
                         className="focus:ring-blue-600 w-full"
                       ></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="light">In Progress</SelectItem>
-                        <SelectItem value="dark">Closed</SelectItem>
+                        <SelectItem value="inprogress">In Progress</SelectItem>
+                        <SelectItem value="closed">Closed</SelectItem>
                       </SelectContent>
                     </Select>
                   </form>
