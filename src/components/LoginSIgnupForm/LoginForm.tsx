@@ -67,7 +67,10 @@ export default function LoginForm() {
             />
           </div>
           {enterData && <p>{enterData}</p>}
-          <Button className="bg-[#4338CA] text-white text-xl mt-3">
+          <Button
+            type="submit"
+            className="bg-[#4338CA] text-white text-xl mt-3"
+          >
             Login
           </Button>
         </form>

@@ -8,7 +8,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  // SelectValue,
 } from "@/components/ui/select";
 import { Button } from "../ui/button";
 import { Link } from "react-router";
@@ -54,26 +53,37 @@ export default function SignupForm() {
           className="flex flex-col gap-3 w-1/2 mt-5 border p-8 rounded-md"
         >
           <div>
-            <label className="font-bold mb-2">First name</label>
+            <label id="first-name" className="font-bold mb-2">
+              First name
+            </label>
             <Input
+              aria-labelledby="first-name"
               className="h-12"
               {...register("first_name", { required: true })}
             />
           </div>
           <div>
-            <label className="font-bold mb-2">Last Name</label>
-            <Input className="h-12" />
+            <label id="last-name" className="font-bold mb-2">
+              Last Name
+            </label>
+            <Input aria-labelledby="last-name" className="h-12" />
           </div>
           <div>
-            <label className="font-bold mb-2">Email</label>
+            <label id="email" className="font-bold mb-2">
+              Email
+            </label>
             <Input
+              aria-labelledby="email"
               className="h-12"
               {...register("last_name", { required: true })}
             />
           </div>
           <div>
-            <label className="font-bold mb-2">Password</label>
+            <label id="password" className="font-bold mb-2">
+              Password
+            </label>
             <Input
+              aria-labelledby="password"
               className="h-12"
               {...register("password", { required: true })}
             />
@@ -82,6 +92,7 @@ export default function SignupForm() {
             <label>Role</label>
             <Select onValueChange={(value) => setValue("role", value)}>
               <SelectTrigger
+                role="role"
                 {...register("role", { required: true })}
                 className="focus:ring-blue-600 w-full"
               ></SelectTrigger>

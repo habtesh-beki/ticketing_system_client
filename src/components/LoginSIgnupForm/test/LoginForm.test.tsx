@@ -1,33 +1,23 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LoginForm from "../LoginForm";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
+import axios from "axios";
+import AxiosMockAdapter from "axios-mock-adapter";
 
-vi.mock("../ui/input", () => ({
-  Input: ({ ...props }) => <input {...props} />,
-}));
-
-vi.mock("../ui/button", () => ({
-  Button: ({ children, ...props }) => <button {...props}>{children}</button>,
-}));
+const mock = new AxiosMockAdapter(axios);
 
 vi.mock("react-router", () => ({
-  Link: ({ children, to }) => <a href={to}>{children}</a>,
+  Link: ({ children, to }: { children: string; to: string }) => (
+    <a href={to}>{children}</a>
+  ),
 }));
 
 vi.mock("lucide-react", () => ({
   User: () => <div data-testid="user-icon" />,
 }));
-
-// beforeAll(() => server.listen());
-// afterEach(() => {
-//   server.resetHandlers();
-//   vi.clearAllMocks();
-//   localStorage.clear();
-// });
-// afterAll(() => server.close());
 
 describe("LoginForm", () => {
   beforeEach(() => {
@@ -63,46 +53,46 @@ describe("LoginForm", () => {
   });
 
   it("submits the form and handles successful login", async () => {
+    mock
+      .onPost("http://127.0.0.1:3000/api/v1/login")
+      .reply(200, { token: "false-token" });
+
     const emailInput = screen.getByLabelText("Email");
     const passwordInput = screen.getByLabelText("Password");
     const submitButton = screen.getByRole("button", { name: "Login" });
 
-    userEvent.click(submitButton);
-
     await userEvent.type(emailInput, "test@example.com");
     await userEvent.type(passwordInput, "password123");
-    // await userEvent.click(submitButton);
-    // await waitFor(() => {
-    //   expect(localStorage.getItem("auth-token")).toBe("fake-token");
-    //   expect(screen.getByText("data enter successfully")).toBeInTheDocument();
-    // });
+
+    fireEvent.click(submitButton);
+    await waitFor(() => {
+      expect(screen.getByText("data enter successfully")).toBeInTheDocument();
+    });
+
+    expect(localStorage.getItem("auth-token")).toBe("false-token");
   });
 
-  // it("handles login error", async () => {
-  //   server.use(
-  //     http.post("http://127.0.0.1:3000/api/v1/login", () => {
-  //       return new HttpResponse(null, { status: 401 });
-  //     })
-  //   );
+  it("submits the form and handles successful login", async () => {
+    mock.onPost("http://127.0.0.1:3000/api/v1/login").reply(400);
 
-  //   const emailInput = screen.getByLabelText("Email");
-  //   const passwordInput = screen.getByLabelText("Password");
-  //   const submitButton = screen.getByRole("button", { name: "Login" });
+    const emailInput = screen.getByLabelText("Email");
+    const passwordInput = screen.getByLabelText("Password");
+    const submitButton = screen.getByRole("button", { name: "Login" });
 
-  //   await userEvent.type(emailInput, "test@example.com");
-  //   await userEvent.type(passwordInput, "wrongpassword");
-  //   await userEvent.click(submitButton);
+    await userEvent.type(emailInput, "test@example.com");
+    await userEvent.type(passwordInput, "wrongpassword123");
+    fireEvent.change(emailInput, {
+      Target: { value: "test@example.com" },
+    });
+    fireEvent.change(passwordInput, {
+      Target: { value: "wrongpassword" },
+    });
 
-  //   await waitFor(() => {
-  //     expect(localStorage.getItem("auth-token")).toBeNull();
-  //     expect(
-  //       screen.queryByText("data enter successfully")
-  //     ).not.toBeInTheDocument();
-  //   });
-  // });
-
-  // it("navigates to signup page when link is clicked", () => {
-  //   const signupLink = screen.getByText("create new account");
-  //   expect(signupLink).toHaveAttribute("href", "/signup");
-  // });
+    fireEvent.click(submitButton);
+    await waitFor(() => {
+      expect(
+        screen.queryByText("data enter successfully")
+      ).not.toBeInTheDocument();
+    });
+  });
 });
